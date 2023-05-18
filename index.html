@@ -4,6 +4,8 @@
     <title>Snake 2!</title>
 </head>
 <body>
+
+  <button onclick="startGame();"> start game </button>
     <canvas id="canvas" width="500" height="500"></canvas>
 
     <script src="https://code.jquery.com/jquery-2.1.0.js"></script>
@@ -149,7 +151,7 @@
         this.segments.pop();
       }
 
-    if (newHead.equal(TakeAwayPoints.position)) {
+    if (newHead.equal(takeAwayPoints.position)) {
         score++;
         SPEED += 10000;
         this.segments.pop();
@@ -157,7 +159,7 @@
         this.segments.pop();
         this.segments.pop();
         console.log(SPEED)
-        TakeAwayPoints.move();
+        takeAwayPoints.move();
       } else {
     };
     
@@ -218,7 +220,7 @@
     };
 
     // The add5 constructor
-    var add5 = function () {
+    var Add5 = function () {
       this.position = new Block(20, 20) ;
     };
 
@@ -233,7 +235,7 @@
     };
 
     // Draw a circle at the add5's location
-    add5.prototype.draw = function () {
+    Add5.prototype.draw = function () {
       this.position.drawCircle("#666666");
     };
 
@@ -251,7 +253,7 @@
     };
 
      // Move the add5 to a new random location
-     add5.prototype.move = function () {
+     Add5.prototype.move = function () {
       var randomCol = Math.floor(Math.random() * (widthInBlocks - 2)) + 1;
       var randomRow = Math.floor(Math.random() * (heightInBlocks - 2)) + 1;
       this.position = new Block(randomCol, randomRow);
@@ -266,29 +268,39 @@
      };
 
 
-
     // Create the snake , speed powerup and apple objects
-    var snake = new Snake();
-    var apple = new Apple();
-    var add5 = new add5();
-    var TakeAwayPoints = new TakeAwayPoints();
+    var snake 
+    var apple 
+    var add5 
+    var takeAwayPoints
+    
+     var intervalId 
 
-    // Pass an animation function to setInterval
-    var intervalId = setInterval(function () {
-      ctx.clearRect(0, 0, width, height);
-      drawScore();
-      snake.move();
-      snake.draw();
-      apple.draw();
-      if (score !== 0 && score % 9 === 0){
-        add5.draw();
-      }
-      console.log(points)
-      if (score !== 0 && score % 5 === 0){
-        TakeAwayPoints.draw();
-      }
-      drawBorder();
-    },100,);
+    var startGame = function (){
+      score = 0
+      snake = new Snake();
+      apple = new Apple();
+      add5 = new Add5();
+      takeAwayPoints = new TakeAwayPoints();
+        // Pass an animation function to setInterval
+        intervalId = setInterval(function () {
+        ctx.clearRect(0, 0, width, height);
+        drawScore();
+        snake.move();
+        snake.draw();
+        apple.draw();
+        if (score !== 0 && score % 9 === 0){
+          add5.draw();
+        }
+        console.log(points)
+        if (score !== 0 && score % 5 === 0){
+          takeAwayPoints.draw();
+        }
+        drawBorder();
+      },100,);
+    }
+    
+  
 
     // Convert keycodes to directions
     var directions = {
