@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Snake 2!</title>
+    <title>Snake 3!</title>
 </head>
 <body>
-
-  <button onclick="startGame();"> start game </button>
     <canvas id="canvas" width="500" height="500"></canvas>
 
     <script src="https://code.jquery.com/jquery-2.1.0.js"></script>
@@ -29,6 +27,7 @@
     
     //set speed to 1
     var SPEED = 100
+
 
     //set points to 0
     var points = 0
@@ -144,27 +143,50 @@
 
       this.segments.unshift(newHead);
 
+      if (newHead.equal(teleport.position)) {
+      snake.segments.unshift(new Block(teleport2.y , teleport2.x))
+      snake.segments.pop();
+      }
       if (newHead.equal(apple.position)) {
         score++;
         apple.move();
-      } else {
-        this.segments.pop();
-      }
+        var teleportMove =+ 1
+        if ( score % 3 === 0 ) {
+        teleport2.move();
+        teleport.move();
+        }
+    } else {
+      this.segments.pop();
+    };
 
-    if (newHead.equal(takeAwayPoints.position)) {
+      if (newHead.equal(teleport2.position)) {
+        snake.segments.unshift(new Block(teleport.y , teleport.x))
+        snake.segments.pop();
+    } else {
+    };
+
+      
+    if (newHead.equal(TakeAwayPoints.position)) {
+      if  (score !== 0 && score % 5 === 0){
         score++;
         SPEED += 10000;
         this.segments.pop();
         this.segments.pop();
         this.segments.pop();
         this.segments.pop();
-        console.log(SPEED)
-        takeAwayPoints.move();
+        TakeAwayPoints.move();
+        var teleportMove =+ 1
+        if (  score % 3 === 0) {
+        teleport2.move();
+        teleport.move();
+      }
+        }
       } else {
     };
     
     if (newHead.equal(add5.position)) {
-        score++;
+      if  (score !== 0 && score % 9 === 0)
+       { score++;
         score++;
         score++;
         score++;
@@ -175,6 +197,11 @@
         this.segments.push(new Block);
         this.segments.push(new Block);
         add5.move();
+        var teleportMove =+ 1
+        if (  score % 3 === 0) {
+        teleport2.move();
+        teleport.move();}
+        }
       } else {
       }
 };
@@ -219,8 +246,24 @@
       this.position = new Block(10, 10) ;
     };
 
+    // The teleport2 constructor
+    var teleport2 = function () {
+      this.x = 5
+      this.y = 19
+      this.position = new Block(5, 19) ;
+    };
+
+
+    // The teleport constructor
+    var teleport = function () {
+      this.x = 19
+      this.y = 5
+      this.position = new Block(19, 5) ;
+    };
+
+
     // The add5 constructor
-    var Add5 = function () {
+    var add5 = function () {
       this.position = new Block(20, 20) ;
     };
 
@@ -233,9 +276,19 @@
     Apple.prototype.draw = function () {
       this.position.drawCircle("#ff0000");
     };
+    
+    // Draw a circle at the teleport2's location
+    teleport2.prototype.draw = function () {
+      this.position.drawCircle("#A020F0");
+    };
+
+     // Draw a circle at the teleport's location
+     teleport.prototype.draw = function () {
+      this.position.drawCircle("#A020F0");
+    };
 
     // Draw a circle at the add5's location
-    Add5.prototype.draw = function () {
+    add5.prototype.draw = function () {
       this.position.drawCircle("#666666");
     };
 
@@ -251,9 +304,27 @@
       this.position = new Block(randomCol, randomRow);
       points + 1 
     };
+    // Move the teleport2 to a new random location
+    teleport2.prototype.move = function () {
+      var randomCol = Math.floor(Math.random() * (widthInBlocks - 2)) + 1;
+      var randomRow = Math.floor(Math.random() * (heightInBlocks - 2)) + 1;
+      this.position = new Block(randomCol, randomRow);
+      this.x = randomRow
+      this.y = randomCol
+      points + 1 
+    };
 
+     // Move the teleport to a new random location
+     teleport.prototype.move = function () {
+      var randomCol = Math.floor(Math.random() * (widthInBlocks - 2)) + 1;
+      var randomRow = Math.floor(Math.random() * (heightInBlocks - 2)) + 1;
+      this.position = new Block(randomCol, randomRow);
+      this.x = randomRow
+      this.y = randomCol
+      points + 1 
+    };
      // Move the add5 to a new random location
-     Add5.prototype.move = function () {
+     add5.prototype.move = function () {
       var randomCol = Math.floor(Math.random() * (widthInBlocks - 2)) + 1;
       var randomRow = Math.floor(Math.random() * (heightInBlocks - 2)) + 1;
       this.position = new Block(randomCol, randomRow);
@@ -268,39 +339,42 @@
      };
 
 
-    // Create the snake , speed powerup and apple objects
-    var snake 
-    var apple 
-    var add5 
-    var takeAwayPoints
-    
-     var intervalId 
 
-    var startGame = function (){
-      score = 0
-      snake = new Snake();
-      apple = new Apple();
-      add5 = new Add5();
-      takeAwayPoints = new TakeAwayPoints();
-        // Pass an animation function to setInterval
-        intervalId = setInterval(function () {
-        ctx.clearRect(0, 0, width, height);
-        drawScore();
-        snake.move();
-        snake.draw();
-        apple.draw();
-        if (score !== 0 && score % 9 === 0){
-          add5.draw();
-        }
-        console.log(points)
-        if (score !== 0 && score % 5 === 0){
-          takeAwayPoints.draw();
-        }
-        drawBorder();
-      },100,);
+    // Create the snake , speed powerup and apple objects
+    var snake = new Snake();
+    var teleport2 = new teleport2();
+    var teleport = new teleport();
+    var apple = new Apple();
+    var add5 = new add5();
+    var TakeAwayPoints = new TakeAwayPoints();
+
+    // Pass an animation function to setInterval
+    var intervalId = setInterval(function () {
+      ctx.clearRect(0, 0, width, height);
+      drawScore();
+      snake.move();
+      snake.draw();
+      apple.draw();
+      if (score !== 1 && score !== 2 && score !== 0 ){
+        teleport.draw();
+        teleport2.draw();
+      }
+      if (score % 0 === 0){
+        teleport.prototype.move = function () {
+      var randomCol = Math.floor(Math.random() * (widthInBlocks - 2)) + 1;
+      var randomRow = Math.floor(Math.random() * (heightInBlocks - 2)) + 1;
+      this.position = new Block(randomCol, randomRow);
+      }
     }
-    
-  
+      if (score !== 0 && score % 9 === 0){
+        add5.draw();
+      }
+      console.log(points)
+      if (score !== 0 && score % 5 === 0){
+        TakeAwayPoints.draw();
+      }
+      drawBorder();
+    },100,);
 
     // Convert keycodes to directions
     var directions = {
